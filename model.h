@@ -6,13 +6,14 @@
 #include <assimp/postprocess.h>
 #include <iostream>
 #include <string>
+#include "mesh.h"
 using namespace std;
 
 class Model {
     private:
         vector<Mesh> meshes;
         string directory;
-
+        vector<Texture> textures_loaded;
         void loadModel(string path);
         void processNode(aiNode *node, const aiScene *scene);
         Mesh processMesh(aiMesh *mesh, const aiScene *scene);

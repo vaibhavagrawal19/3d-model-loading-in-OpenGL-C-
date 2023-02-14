@@ -21,6 +21,7 @@ struct Vertex {
 struct Texture {
     unsigned int id;
     string type;
+    string path; // this has been stored so that we can compare other textures with this one, to avoid loading the same texture again and again
 };
 
 class Mesh {

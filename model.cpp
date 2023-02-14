@@ -89,9 +89,49 @@ Mesh Model::processMesh(aiMesh *mesh, aiScene *scene)
 
     if (mesh->mMaterialIndex > 0)
     {
-        
+        aiMaterial *material = scene->mMaterials[mesh->mMaterialIndex];
+
+        // add all the diffuse texture maps in the textures array
+        vector<Texture> diffuseMaps = loadMaterialTextures(material, aiTextureType_DIFFUSE, "texture_diffuse");
+        textures.insert(textures.end(), diffuseMaps.begin(), diffuseMaps.end());
+
+        // add all the specular texture maps in the texture array
+        vector<Texture> specularMaps = loadMaterialTextures(material, aiTextureType_SPECULAR, "texture_specular");
+        textures.insert(textures.end(), specularMaps.begin(), specularMaps.end());
     }
 
     return Mesh(vertices, indices, textures);
+}
+
+vector<Texture> Model::loadMaterialTextures(aiMaterial *mat, aiTextureType type, string typename)
+{
+    vector<Texture> textures;
+    for (unsigned int i = 0; i < mat->GetTextureCount(type); i++)
+    {
+        // store the path of the texture file in a string variable
+        aiString str;
+        mat->GetTexture(type, i, &str);
+        bool skip = false;
+        for (unsigned int j = 0; j < textures_loaded.size(); j++)
+        {
+            if (std::strcmp(textures_loaded[j].path.data(), str.C_Str()))
+            {
+                textures.push_back(textures_loaded[j]);
+                skip = true;
+                break;   
+            }
+        }
+
+        if (!skip)
+        {
+            // create a new texture by loading from file
+            Texture texture;
+            texture.id = TextureFromFile(str.C_Str(), directory);
+            texture.type = typeName;
+            texture.path = str;
+            textures.push_back(texture);
+        }
+    }
+    return textures;
 }
 
