@@ -8,7 +8,7 @@ void Model::Draw(unsigned int *shaderProgram)
 
 Model::Model(char *path)
 {
-
+    loadModel(path.c_str);
 }
 
 void Model::loadModel(string path)
